@@ -1,2 +1,11 @@
 # Classifier
- Picture classifier with Tensorflow JS
+
+Picture classifier with HTML & TailwindCSS & TensorflowJS by Acapnes.
+
+## Selection
+
+![](previvew/selection.png)
+
+## Results
+
+![](previvew/results.png)

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Picture Classifier</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div
+      class="min-w-screen min-h-screen w-full flex h-full bg-[#171717] text-gray-200 py-8 px-5"
+    >
+      <div
+        class="flex-auto flex flex-col space-y-3 items-center justify-center"
+      >
+        <div class="flex flex-col space-y-2 rounded-sm">
+          <div
+            class="w-full flex flex-col space-y-1 items-center text-center pb-2"
+          >
+            <p class="text-3xl font-bold">Welcome to Picture Classifier!</p>
+            <p class="text-xl font-semibold text-gray-300">
+              Select a picture and see the results!
+            </p>
+            <p class="text-md font-semibold text-gray-400">
+              Supports JPG, JPEG, PNG, WEBP, JFIF
+            </p>
+            <p class="fixetext-sm font-semibold text-gray-600">
+              ©Copyright, MIT License
+            </p>
+          </div>
+          <button
+            id="ChooseAgainButton"
+            class="rounded-sm px-[2rem] py-[1rem] text-xl bg-purple-600 hover:bg-purple-900 hover:text-gray-100 transition duration-400 hidden"
+          >
+            Choose again!
+          </button>
+
+          <div class="w-full flex justify-center">
+            <button
+              id="ChooseButton"
+              class="w-fit border-2 rounded-sm p-[3rem] md:p-[3.5rem] lg:p-[4rem] text-3xl bg-purple-700 hover:bg-purple-900 hover:text-gray-100 transition duration-500 hover:scale-105"
+            >
+              Choose a Image!
+            </button>
+          </div>
+          <div class="w-full flex justify-center">
+            <img
+              id="Image"
+              src=""
+              alt="Image"
+              class="max-h-[60vh] max-w-[60vw] object-cover border-2 rounded-sm hidden"
+            />
+          </div>
+        </div>
+        <div
+          id="Results"
+          class="w-full flex flex-col items-center text-xl md:text-xl lg:text-2xl text-center hidden"
+        ></div>
+        <input
+          id="ImageInput"
+          type="file"
+          name="filename"
+          accept="image/jpg, image/jpeg, image/png, image/webp, image/jfif"
+          class="hidden"
+        />
+      </div>
+    </div>
+
+    <script>
+      const Image = document.getElementById("Image");
+      const ImageInput = document.getElementById("ImageInput");
+      const ChooseButton = document.getElementById("ChooseButton");
+      const ChooseAgainButton = document.getElementById("ChooseAgainButton");
+      const Results = document.getElementById("Results");
+
+      ChooseButton.addEventListener("click", () => {
+        ImageInput.click();
+      });
+
+      ChooseAgainButton.addEventListener("click", () => {
+        ImageInput.click();
+      });
+
+      ImageInput.addEventListener("change", (e) => {
+        Image.src = URL.createObjectURL(e.target.files[0]);
+        Image.className =
+          "max-h-[60vh] max-w-[60vw] object-cover border-2 rounded-sm";
+        ChooseAgainButton.className =
+          "rounded-sm px-[2rem] py-[1rem] text-xl bg-purple-600 hover:bg-purple-900 hover:text-gray-100 transition duration-400";
+        ChooseButton.className += " hidden";
+        Results.className =
+          "w-full flex flex-col items-center text-lg md:text-xl lg:text-2xl text-center";
+        Results.innerHTML = `<p class="font-bold">${e.target.files[0].name}</p>`;
+        mobilenet.load().then((model) => {
+          model.classify(Image).then((predictions) => {
+            predictions.forEach((prediction, predictionIndex) => {
+              Results.innerHTML += `<p class="font-semibold">${predictionIndex}- ${prediction.className} - %${prediction.probability}</p>`;
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
